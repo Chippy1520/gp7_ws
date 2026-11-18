@@ -243,7 +243,7 @@ class DemoWindow(QtWidgets.QWidget):
             if answer != QtWidgets.QMessageBox.Yes:
                 return
             reset = True
-        if action != 'open':
+        if action != 'open' or profile == 'sprint':
             self.prepared_profile = None
         self.active_action, self.active_profile = action, profile
         self.ready_seen = False
@@ -347,7 +347,11 @@ class DemoWindow(QtWidgets.QWidget):
             detail = ' · no final ready evidence' if action == 'validate' and code == 0 else ''
             self.show_message(f'{str(action).capitalize()} did not pass · exit {code}{detail}', error=True)
         elif action == 'validate':
-            self.show_message(f'Validated · {profile} · ready to Run.')
+            preflight = (report or {}).get('workspace_preflight', {})
+            if preflight.get('needs_rise'):
+                self.show_message(f'Validated · {profile} · arm will rise first.')
+            else:
+                self.show_message(f'Validated · {profile} · ready to Run.')
         elif action == 'open':
             self.show_message('Gazebo open request finished · no motion requested.')
         elif report and report.get('status'):

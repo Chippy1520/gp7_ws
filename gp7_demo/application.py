@@ -4,11 +4,14 @@ from contextlib import contextmanager
 from datetime import datetime
 import fcntl
 from functools import partial
+import hashlib
 import json
 from pathlib import Path
 import signal
+import select
 import subprocess
 import sys
+import time
 from types import SimpleNamespace
 import uuid
 
@@ -67,10 +70,11 @@ def argument_parser():
     parser.add_argument("--no-viewer", action="store_true", help="Keep the server headless.")
     parser.add_argument("--output", type=Path)
     parser.add_argument("--_actor", action="store_true", help=argparse.SUPPRESS)
+    parser.add_argument("--_warm", action="store_true", help=argparse.SUPPRESS)
     return parser
 
 
-def run_actor(sequence, options, timings, geometry):
+def run_actor(sequence, options, timings, geometry, next_action=None):
     """Adapt presentation options; retain every existing backend execution gate."""
     actor_options = SimpleNamespace(
         execute=not options.validate,
@@ -84,12 +88,13 @@ def run_actor(sequence, options, timings, geometry):
     # Start discovery while the actor imports its ROS/geometry dependencies.
     with world_query_client() as query:
         from pick_place_motion import run as execute
+        reuse = {} if next_action is None else {'next_action': next_action}
         execute(sequence, timings=timings, options=actor_options,
                 use_profile_timings=False,
                 world_audit=partial(audit_world, query=query),
-                **geometry)
+                **geometry, **reuse)
     result = json.loads((options.output / "result.json").read_text())
-    expected = 'READY_' if options.validate else 'PASS'
+    expected = ('READY_', 'PASS') if next_action is not None else ('READY_' if options.validate else 'PASS')
     return 0 if result['status'].startswith(expected) else 1
 
 
@@ -120,18 +125,22 @@ def wait_for_actor(options):
         signal.signal(signal.SIGINT, previous)
 
 
+def select_scene(session, options):
+    world = session.ensure_scene(options.profile, reset=options.reset)
+    session_id = json.loads(session.registry.read_text())['server']['sid']
+    selection = read_selection()
+    if selection.get("session_id") != session_id or options.reset:
+        selection = {"world": str(world), "session_id": session_id, "cycle_started": False}
+    selection["profile"] = options.profile
+    write_selection(selection)
+    return world, selection
+
+
 def run_owned_session(options):
     """Scene creation/restart is separate from validation and robot commands."""
     with task_lock():
         session = Session()
-        world = session.ensure_scene(options.profile, reset=options.reset)
-        registry = json.loads(session.registry.read_text())
-        session_id = registry['server']['sid']
-        selection = read_selection()
-        if selection.get("session_id") != session_id or options.reset:
-            selection = {"world": str(world), "session_id": session_id, "cycle_started": False}
-        selection["profile"] = options.profile
-        write_selection(selection)
+        _, selection = select_scene(session, options)
         if options.open_only or not options.no_viewer:
             session.open_viewer()
         if options.open_only:
@@ -141,6 +150,50 @@ def run_owned_session(options):
             selection["cycle_started"] = True
             write_selection(selection)
         return wait_for_actor(options)
+
+
+def run_warm(sequence, options, timings, geometry):
+    """One owned Sprint validate/run session; stdin EOF never authorizes motion."""
+    if options.profile != 'sprint' or not options.validate or not options.no_viewer or options.open_only:
+        raise ValueError('Warm actor requires headless Sprint Validate')
+    from rclpy import spin_once
+    with task_lock():
+        session = Session()
+        world, selection = select_scene(session, options)
+        ensure_bridge(session)
+        sources = (ROOT / 'task.py', world)
+        def fingerprints():
+            return tuple(hashlib.sha256(path.read_bytes()).digest() for path in sources)
+        expected = fingerprints()
+
+        def next_action(executor):
+            print('GP7_MONITOR {"event":"warm_ready"}', flush=True)
+            deadline = time.monotonic() + 180
+            while time.monotonic() < deadline and not executor.abort_requested():
+                readable, _, _ = select.select([sys.stdin], [], [], .005)
+                if not readable:
+                    spin_once(executor.node, timeout_sec=0.)
+                    continue
+                line = sys.stdin.readline(16384)
+                if not line:
+                    return None
+                command = json.loads(line)
+                action = command['action']
+                if action not in ('validate', 'run'):
+                    raise ValueError('Unknown warm actor action')
+                registry = json.loads(session.registry.read_text())
+                if ((registry.get('server') or {}).get('sid') != selection['session_id']
+                        or read_selection().get('session_id') != selection['session_id']
+                        or not session.scene_compatible(options.profile) or fingerprints() != expected):
+                    raise RuntimeError('Scene or task changed. Validate again.')
+                if action == 'run':
+                    selection['cycle_started'] = True
+                    write_selection(selection)
+                options.output = Path(command['output'])
+                return action == 'run', options.output
+            return None
+
+        return run_actor(sequence, options, timings, geometry, next_action)
 
 
 def run(sequence, *, timings, profile, pickup_height, hover_clearance, retreat_distance):
@@ -158,6 +211,8 @@ def run(sequence, *, timings, profile, pickup_height, hover_clearance, retreat_d
     try:
         if options._actor:
             return run_actor(sequence, options, selected_timings, geometry)
+        if options._warm:
+            return run_warm(sequence, options, selected_timings, geometry)
         if not PYTHON.is_file():
             raise RuntimeError("The project environment is missing. Run ./setup.sh first.")
         return run_owned_session(options)

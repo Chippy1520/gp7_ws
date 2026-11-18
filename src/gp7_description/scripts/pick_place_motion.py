@@ -355,7 +355,7 @@ def controller_gate():
 
 
 def run(sequence,*,timings,pickup_height,hover_clearance,retreat_distance,
-        options=None,use_profile_timings=True,world_audit=None):
+        options=None,use_profile_timings=True,world_audit=None,next_action=None):
     """Default is no-motion preflight; explicit --execute runs the user sequence."""
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--execute',action='store_true')
@@ -414,21 +414,43 @@ def run(sequence,*,timings,pickup_height,hover_clearance,retreat_distance,
         e.ready(require_home=False)
         report['frames']=e.wait_native()
         report['contact_topics']=[] if config['execution'].get('kinematic_playback') else e.native.require_contact_publishers()
+        if next_action is not None:
+            if not quick or args.execute:raise ValueError('Warm actor requires Sprint preflight first')
+            base_report=report.copy()
         motion=GazeboMotion(e,timings,report,pickup_height,hover_clearance,retreat_distance,args.stop_after_lift)
-        if quick and not args.execute:
-            motion.preflight()
-        else:
-            motion.prepare()
-        if stop_requested:raise KeyboardInterrupt('Operator requested Stop')
-        if not args.execute:
+        while True:
+            if quick and not args.execute:
+                motion.preflight()
+            else:
+                motion.prepare()
+            if stop_requested:raise KeyboardInterrupt('Operator requested Stop')
+            if args.execute:break
             report['status']='READY_WORKSPACE' if quick else 'READY_APPROACH_AND_DESCENT'
             if quick:
                 message=('Cube is in the workspace. Arm will rise first.' if report['workspace_preflight']['needs_rise']
                          else 'Cube is in the workspace. Arm is above clearance height.')
             else:message='Approach/descent validated. Carry is planned after grasp.'
             status('PREPARE','ready',message)
-            return
+            if next_action is None:return
+            (output/'result.json').write_text(json.dumps(report,indent=2)+'\n')
+            action=next_action(e)
+            if action is None:return
+            args.execute,output=action
+            output.mkdir(parents=True,exist_ok=True)
+            e.output=output
+            report=base_report.copy()
+            motion.report=report
+            if args.execute:
+                if not controller_gate():raise RuntimeError('Controller gate has not passed')
+                e.ready(require_home=False)
+                report['frames']=e.wait_native()
         if not config['execution'].get('kinematic_playback'):e.native.require_contact_publishers()
+        if next_action is not None:
+            cube=fresh(e)['cube']
+            planned=np.asarray(report['pickup_pose_world'])
+            if (np.linalg.norm(cube[:3,3]-planned[:3,3])>.001
+                    or Rotation.from_matrix(cube[:3,:3]@planned[:3,:3].T).magnitude()>np.deg2rad(1.)):
+                raise RuntimeError('Cube moved during approach preparation. Validate again.')
         e.refresh();report['cycle_begin_sim_time']=e.sim;report['cycle_begin_wall_time']=time.monotonic()
         sequence(motion)
         report['complete_with_stability_sim_s']=e.sim-report['cycle_begin_sim_time']
