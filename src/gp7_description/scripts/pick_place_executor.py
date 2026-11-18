@@ -37,6 +37,10 @@ class Reference:
 
 def angle(first,second):return float(np.linalg.norm(Rotation.from_matrix(first@second.T).as_rotvec()))
 
+def cube_is_flat(cube):
+    """A cube can rest on any face, at any yaw."""
+    return np.max(np.abs(cube[2,:3]))>=np.cos(np.deg2rad(1.))
+
 
 class Executor(ControllerCheck):
     def __init__(self,config,output,cube_only=False,detachable_grasp=False):
@@ -232,7 +236,11 @@ class Executor(ControllerCheck):
         if np.linalg.norm(derived[:3,3]-data['cube'][:3,3])>.003:raise RuntimeError('Grasp-centre calibration exceeded 3 mm')
         self.grasp_transform=np.linalg.inv(derived)@data['cube']
         self.cube_rotation=data['cube'][:3,:3].copy()
-        if angle(self.cube_rotation,np.eye(3))>np.deg2rad(1.):raise RuntimeError('Cube was tilted during grasp')
+        if getattr(self,'config',{}).get('execution',{}).get('workspace_only'):
+            flat=cube_is_flat(data['cube'])
+        else:
+            flat=angle(self.cube_rotation,np.eye(3))<=np.deg2rad(1.)
+        if not flat:raise RuntimeError('Cube was tilted during grasp')
         self.carrying=True
         self.metrics.append({'phase':'CALIBRATED_GEOMETRIC_GRASP' if ideal else 'CALIBRATED_CONTACT_GRASP','assisted':getattr(self,'attachment',None) is not None,'tcp_cube':self.grasp_transform.tolist(),
                              'basis':'measured joint FK and named actual cube, cross-checked with actual palm',
@@ -247,9 +255,11 @@ class Executor(ControllerCheck):
         centre=relative[1,3]
         gaps=np.array([.035-self.q[6]-centre-radius,.035-self.q[7]+centre-radius])
         bottom=cube[2,3]-.025*np.abs(cube[2,:3]).sum()
+        flat=(cube_is_flat(cube) if getattr(self,'config',{}).get('execution',{}).get('workspace_only')
+              else angle(cube[:3,:3],np.eye(3))<=np.deg2rad(1.))
         if (not np.isfinite(relative).all() or np.linalg.norm(relative[:3,3])>.003 or np.max(abs(gaps))>.0005
-                or abs(bottom)>.001 or angle(cube[:3,:3],np.eye(3))>np.deg2rad(1.)):
-            raise RuntimeError('Idealized grasp geometry invalid: cube must be aligned, grounded and between settled jaws')
+                or abs(bottom)>.001 or not flat):
+            raise RuntimeError('Idealized grasp geometry invalid: cube must be flat, grounded and aligned with the settled jaws')
         return {'jaw_face_gaps_m':gaps.tolist(),'cube_bottom_m':float(bottom)}
 
     def detach_supported(self):
@@ -312,9 +322,10 @@ class Executor(ControllerCheck):
 
     def final_stability(self):
         self.phase='PLACEMENT_STABILITY';start=self.sim;positions=[];orientations=[]
+        reference=(self.cube_rotation if getattr(self,'config',{}).get('execution',{}).get('workspace_only') else np.eye(3))
         while self.sim-start<2.:
             self.spin();data=self.native.snapshot();self.supported()
-            positions.append(data['cube'][:3,3].tolist());orientations.append(angle(data['cube'][:3,:3],np.eye(3)))
+            positions.append(data['cube'][:3,3].tolist());orientations.append(angle(data['cube'][:3,:3],reference))
             if orientations[-1]>np.deg2rad(1.):raise RuntimeError('Released cube orientation outside 1 degree')
         return {'stable_simulation_seconds':self.sim-start,'final_cube_center_m':positions[-1],
                 'scope':'geometric pose stability, not physical support/friction validation' if self.config.get('execution',{}).get('kinematic_playback') else 'physical contact and pose stability',

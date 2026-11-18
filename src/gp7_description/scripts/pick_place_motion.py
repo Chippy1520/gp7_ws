@@ -15,7 +15,7 @@ from rclpy.signals import SignalHandlerOptions
 from scipy.spatial.transform import Rotation
 from kinematics import ik_exported
 from pick_place_config import PKG,load_config,arm_limits
-from pick_place_executor import Executor
+from pick_place_executor import Executor,cube_is_flat
 from pick_place_planner import joint_segment,continuous_extrema,validate_segment
 from pick_place_pickup_area import load_grasp_workspace,in_grasp_workspace
 from pick_place_profiles import PROFILES
@@ -83,8 +83,11 @@ def accept_pickup(config,cube,use_live=False):
         return
     # This runner picks from the floor, not from arbitrary surfaces.
     bottom=cube[2,3]-.025*abs(cube[2,:3]).sum()
-    if abs(bottom)>.001 or cube[2,2]<np.cos(np.deg2rad(1.)):
-        raise RuntimeError('Live pickup requires an upright cube resting on the ground')
+    sprint=config.get('execution',{}).get('workspace_only')
+    flat=cube_is_flat(cube) if sprint else cube[2,2]>=np.cos(np.deg2rad(1.))
+    if abs(bottom)>.001 or not flat:
+        shape='a flat cube' if sprint else 'an upright cube'
+        raise RuntimeError(f'Live pickup requires {shape} resting on the ground')
     config['cube']['initial_center_xyz_m']=cube[:3,3].tolist()
 
 
@@ -99,10 +102,18 @@ def check_workspace_start(e,cube):
     if survey is None:raise RuntimeError('Sprint workspace is missing or stale; regenerate it before running')
     if not in_grasp_workspace(*cube[:2,3],survey):
         raise RuntimeError('Cube center is outside the blue Sprint pickup area')
-    if Rotation.from_matrix(cube[:3,:3]).magnitude()>np.deg2rad(1.):
-        raise RuntimeError('Sprint workspace assumes the cube is aligned with the world axes')
+
     bottom=gripper_bottom(e.checker,e.q[:6]);height=clearance_height(e.config)
     return {'gripper_bottom_m':bottom,'clearance_height_m':height,'needs_rise':bool(bottom<height)}
+
+
+def sprint_grasp_rotation(cube):
+    """Point down and align the jaws with a horizontal cube face pair."""
+    index=int(np.argmax(np.abs(cube[0,:3])))
+    x=np.r_[cube[:2,index],0.]
+    x*=np.sign(x[0])/np.linalg.norm(x)
+    z=np.array([0.,0.,-1.])
+    return np.column_stack((x,np.cross(z,x),z))
 
 
 def approach(e,cube,timings,pickup_height,*,prefer_hover=False):
@@ -114,7 +125,7 @@ def approach(e,cube,timings,pickup_height,*,prefer_hover=False):
         start=e.model.fk(q)[:3,3];goal=start.copy();goal[2]+=floor-bottom+.03
         segment,kinematics=differential_segment('CLEARANCE_RISE',q,CartesianPath(start,goal,timings['rise']),e.config)
         reports.append(checked(e,segment,cube=cube,kinematic_report=kinematics));segments.append(segment);q=segment.evaluate(segment.duration)
-    target=cube.copy();target[:3,:3]=cube[:3,:3]@np.diag([1.,-1.,-1.])
+    target=cube.copy();target[:3,:3]=sprint_grasp_rotation(cube) if quick else cube[:3,:3]@np.diag([1.,-1.,-1.])
     # Rank only cheap endpoint/spline estimates. Integrate and collision-check
     # lazily, stopping at the first *pair* that passes, not a whole-cycle optimum.
     limits=arm_limits(e.config)

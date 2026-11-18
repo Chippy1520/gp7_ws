@@ -10,19 +10,17 @@ See the workspace-root `README.md` for setup, the approved minimal GUI and the e
 
 ## Sampled pickup area
 
-The Sprint kinematic world renders the cells in `config/pickup_area_sprint.json`
-whose four corners and center all passed the offline pickup-to-retreat planner.
-The survey uses a floor-level, world-aligned cube and checks the home and nominal
-post-retreat robot starts. The overlay is visual only: no support surface, no
-snapping, and no permission to bypass live validation. Unsurveyed locations are
-not necessarily unreachable, and a sampled cell does not certify its interior.
+The Sprint kinematic world renders cells from `config/grasp_workspace_sprint.json`
+whose four corners and center passed the offline pre-grasp endpoint checks at
+zero yaw. This sampling orientation is not a live alignment requirement: Sprint
+accepts a cube resting flat at any yaw and plans grasp alignment from its measured
+pose. The overlay does not snap the cube or certify a continuous or full path.
 The builder omits the area if the survey fingerprint no longer matches.
 
 Regenerate the survey from the workspace root (no Gazebo or robot motion):
 
 ```sh
-PYTHONPATH=src/gp7_description/scripts OPENBLAS_NUM_THREADS=1 \
-  .venv-pick-place/bin/python -m probe_pickup_area
+OPENBLAS_NUM_THREADS=1 .venv-pick-place/bin/python src/gp7_description/scripts/derive_grasp_workspace.py
 ```
 
 The selected demo runs with physics OFF and geometric cube attachment/support. It is not torque, friction, grasp-force or hardware validation. No kinematic geometry, motion algorithms, original timing presets or numerical limits were retuned for the GUI refactor. `tests/fixtures/numerical_baseline.json` at the workspace root records the pre-refactor calculations used for regression comparison.

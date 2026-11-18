@@ -4,6 +4,7 @@ import unittest
 from unittest.mock import Mock, patch
 
 import numpy as np
+from scipy.spatial.transform import Rotation
 
 import pick_place_motion as motion
 from pick_place_config import load_config
@@ -38,6 +39,27 @@ class WorkspacePreflightTests(unittest.TestCase):
                 self.cube[:3, 3] = xyz
                 with self.assertRaisesRegex(RuntimeError, error):
                     motion.check_workspace_start(self.executor, self.cube)
+
+    def test_flat_rotated_cube_is_accepted_and_grasp_aligns_to_its_faces(self):
+        for roll in (0., 90., 180.):
+            for yaw in (-131., 37., 112.):
+                with self.subTest(roll=roll, yaw=yaw):
+                    self.cube[:3, :3] = Rotation.from_euler('xz', [roll, yaw], degrees=True).as_matrix()
+                    with patch.object(motion, 'gripper_bottom', return_value=.3):
+                        self.assertFalse(motion.check_workspace_start(self.executor, self.cube)['needs_rise'])
+                    tcp = self.cube.copy()
+                    tcp[:3, :3] = motion.sprint_grasp_rotation(self.cube)
+                    np.testing.assert_allclose(tcp[:3, 2], [0., 0., -1.], atol=1e-10)
+                    self.executor.q[6:] = .01
+                    self.executor.model = Mock(fk=Mock(return_value=tcp))
+                    self.executor.native = Mock(snapshot=Mock(return_value={'cube': self.cube}))
+                    motion.Executor.check_grasp_geometry(self.executor)
+
+    def test_cube_on_an_edge_is_rejected_even_if_it_touches_ground(self):
+        self.cube[:3, :3] = Rotation.from_euler('x', 45., degrees=True).as_matrix()
+        self.cube[2, 3] = .025 * np.abs(self.cube[2, :3]).sum()
+        with self.assertRaisesRegex(RuntimeError, 'flat cube resting on the ground'):
+            motion.check_workspace_start(self.executor, self.cube)
 
     def test_sprint_segments_keep_kinematics_without_collision_sweeps(self):
         segment = joint_segment('APPROACH_PICKUP', np.zeros(6), np.zeros(6), 1.)
