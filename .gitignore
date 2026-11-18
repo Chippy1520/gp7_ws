@@ -1,0 +1,28 @@
+# Local environments and generated build products
+/.venv*/
+/build/
+/install/
+/log/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+
+# Local reports, experiments, recordings and generated runtime data
+/verification/
+/diagnostics/
+/vault/
+/PICK_PLACE_HANDOFF.md
+/PICK_PLACE_PROGRESS.md
+/ROS_SIM_CONTROL.md
+/symlink_install_manifest.txt
+*.zip
+*.mp4
+*.webm
+
+# Local editor and operating-system files
+.vscode/
+.idea/
+.DS_Store
+.env
+.env.*

@@ -1,0 +1,53 @@
+{
+  "convention": "standard: Rz(theta) Tz(d) Tx(a) Rx(alpha)",
+  "coordinate_reference": "exported CAD Home, not verified manufacturer zero",
+  "end_frame": "gripper TCP",
+  "units": {
+    "length": "m",
+    "angle": "rad"
+  },
+  "rows": [
+    {
+      "joint": "joint_s",
+      "theta_offset": 0,
+      "d": 0.33,
+      "a": 0.04,
+      "alpha": 1.5707963267948966
+    },
+    {
+      "joint": "joint_l",
+      "theta_offset": 1.5707963267948966,
+      "d": 0,
+      "a": 0.445,
+      "alpha": 0
+    },
+    {
+      "joint": "joint_u",
+      "theta_offset": 0,
+      "d": 0,
+      "a": 0.04,
+      "alpha": 1.5707963267948966
+    },
+    {
+      "joint": "joint_r",
+      "theta_offset": 0,
+      "d": 0.44,
+      "a": 0,
+      "alpha": -1.5707963267948966
+    },
+    {
+      "joint": "joint_b",
+      "theta_offset": 0,
+      "d": 0,
+      "a": 0,
+      "alpha": 1.5707963267948966
+    },
+    {
+      "joint": "joint_t",
+      "theta_offset": 0,
+      "d": 0.155,
+      "a": 0,
+      "alpha": 0
+    }
+  ]
+}

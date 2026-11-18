@@ -1,0 +1,39 @@
+{
+  "q": [
+    -0.4182362112572085,
+    -0.8955078234615489,
+    -0.5271500309127711,
+    -1.3936303670065534e-05,
+    -0.150989092347257,
+    -0.4181542742241338
+  ],
+  "tcp_cube": [
+    [
+      0.9999966050290402,
+      2.502207364975881e-06,
+      -0.002605748286420269,
+      0.0009569722738852482
+    ],
+    [
+      -4.519862238286565e-07,
+      -0.9999993573385199,
+      -0.0011337205752610787,
+      0.00015902037999374063
+    ],
+    [
+      -0.0026057494486100455,
+      0.0011337179040749694,
+      -0.9999959623686114,
+      -0.001100108818957335
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+    ]
+  ],
+  "scope": "Measured detachable-assisted sprint grasp used only as a planning seed; live grasp tolerances and fresh cube collision validation remain mandatory. Different grasps fall back to replanning.",
+  "source_result": "/home/chip/gp7_ws/verification/pick_place/sub10/verified025_sprint03/01_force_8n/result.json",
+  "source_sha256": "4567a4658b1bf86fe7df97a301a5e07a626ff9085a56346adcc9ed452e52922d"
+}

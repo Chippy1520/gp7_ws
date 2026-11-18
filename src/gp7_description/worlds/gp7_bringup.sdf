@@ -1,0 +1,749 @@
+<?xml version='1.0' encoding='utf-8'?>
+<sdf version="1.9">
+  <world name="gp7_lab">
+    <gravity>0 0 -9.81</gravity>
+    <physics name="physics" type="ignored">
+      <max_step_size>0.001</max_step_size>
+      <real_time_factor>1</real_time_factor>
+    </physics>
+    <plugin filename="gz-sim-physics-system" name="gz::sim::systems::Physics" />
+    <plugin filename="gz-sim-user-commands-system" name="gz::sim::systems::UserCommands" />
+    <plugin filename="gz-sim-scene-broadcaster-system" name="gz::sim::systems::SceneBroadcaster" />
+    <light name="sun" type="directional">
+      <pose>0 0 10 0 0 0</pose>
+      <diffuse>0.9 0.9 0.9 1</diffuse>
+      <direction>-0.5 0.2 -1</direction>
+    </light>
+    <model name="ground">
+      <static>true</static>
+      <pose>0 0 -0.05 0 0 0</pose>
+      <link name="body">
+        <inertial>
+          <pose>0 0 0 0 0 0</pose>
+          <mass>1</mass>
+          <inertia>
+            <ixx>1.3341666666666667</ixx>
+            <iyy>1.3341666666666667</iyy>
+            <izz>2.6666666666666665</izz>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyz>0</iyz>
+          </inertia>
+        </inertial>
+        <visual name="visual">
+          <pose>0 0 0 0 0 0</pose>
+          <geometry>
+            <box>
+              <size>4 4 0.1</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>0.7 0.7 0.7 1</ambient>
+            <diffuse>0.7 0.7 0.7 1</diffuse>
+          </material>
+        </visual>
+        <collision name="collision">
+          <pose>0 0 0 0 0 0</pose>
+          <geometry>
+            <box>
+              <size>4 4 0.1</size>
+            </box>
+          </geometry>
+        </collision>
+      </link>
+    </model>
+    <model name="box_a">
+      <static>true</static>
+      <pose>0.55 0.2 0.1 0 0 0</pose>
+      <link name="body">
+        <inertial>
+          <pose>0 0 0 0 0 0</pose>
+          <mass>5</mass>
+          <inertia>
+            <ixx>0.05416666666666667</ixx>
+            <iyy>0.05416666666666667</iyy>
+            <izz>0.075</izz>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyz>0</iyz>
+          </inertia>
+        </inertial>
+        <visual name="visual">
+          <pose>0 0 0 0 0 0</pose>
+          <geometry>
+            <box>
+              <size>0.3 0.3 0.2</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>0.2 0.5 0.8 1</ambient>
+            <diffuse>0.2 0.5 0.8 1</diffuse>
+          </material>
+        </visual>
+        <collision name="collision">
+          <pose>0 0 0 0 0 0</pose>
+          <geometry>
+            <box>
+              <size>0.3 0.3 0.2</size>
+            </box>
+          </geometry>
+        </collision>
+      </link>
+    </model>
+    <model name="box_b">
+      <static>false</static>
+      <pose>0.45 -0.2 0.025 0 0 0</pose>
+      <link name="body">
+        <inertial>
+          <pose>0 0 0 0 0 0</pose>
+          <mass>0.1</mass>
+          <inertia>
+            <ixx>4.166666666666668e-05</ixx>
+            <iyy>4.166666666666668e-05</iyy>
+            <izz>4.166666666666668e-05</izz>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyz>0</iyz>
+          </inertia>
+        </inertial>
+        <visual name="visual">
+          <pose>0 0 0 0 0 0</pose>
+          <geometry>
+            <box>
+              <size>0.05 0.05 0.05</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>0.9 0.3 0.1 1</ambient>
+            <diffuse>0.9 0.3 0.1 1</diffuse>
+          </material>
+        </visual>
+        <collision name="collision">
+          <pose>0 0 0 0 0 0</pose>
+          <geometry>
+            <box>
+              <size>0.05 0.05 0.05</size>
+            </box>
+          </geometry>
+        </collision>
+      </link>
+    </model>
+    <model name="gp7">
+      <self_collide>false</self_collide>
+      <link name="base_link">
+        <pose>0 0 0 0 -0 0</pose>
+        <inertial>
+          <pose>-0.018666479736567 -0.00023023039102554 0.10599906425341 0 0 0</pose>
+          <mass>7.0</mass>
+          <inertia>
+            <ixx>0.049444040788506165</ixx>
+            <iyy>0.05907517376868526</iyy>
+            <izz>0.05608362459785984</izz>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyz>0</iyz>
+          </inertia>
+        </inertial>
+        <visual name="cad_visual">
+          <geometry>
+            <mesh>
+              <uri>/home/chip/gp7_ws/src/gp7_description/meshes/base_link.stl</uri>
+            </mesh>
+          </geometry>
+          <material>
+            <ambient>0.12 0.28 0.7 1</ambient>
+            <diffuse>0.12 0.28 0.7 1</diffuse>
+          </material>
+        </visual>
+        <collision name="approximate_box">
+          <pose>-0.018666479736567 -0.00023023039102554 0.10599906425341 0 0 0</pose>
+          <geometry>
+            <box>
+              <size>0.23733296245337 0.19954052567482 0.21200186648639</size>
+            </box>
+          </geometry>
+        </collision>
+      </link>
+      <link name="link_s">
+        <pose>2.8796409701215e-14 7.4777787945721e-15 0.19900000000098 -3.5652971747461e-12 -5.0158840344734e-12 6.7728773700536e-09</pose>
+        <inertial>
+          <pose>0.0018824636936188 0 0.091449313331395 0 0 0</pose>
+          <mass>5.0</mass>
+          <inertia>
+            <ixx>0.028264975902881805</ixx>
+            <iyy>0.033079380499089935</iyy>
+            <izz>0.027777740304190574</izz>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyz>0</iyz>
+          </inertia>
+        </inertial>
+        <visual name="cad_visual">
+          <geometry>
+            <mesh>
+              <uri>/home/chip/gp7_ws/src/gp7_description/meshes/link_s.stl</uri>
+            </mesh>
+          </geometry>
+          <material>
+            <ambient>0.12 0.28 0.7 1</ambient>
+            <diffuse>0.12 0.28 0.7 1</diffuse>
+          </material>
+        </visual>
+        <collision name="approximate_box">
+          <pose>0.0018824636936188 0 0.091449313331395 0 0 0</pose>
+          <geometry>
+            <box>
+              <size>0.19776393473148 0.16600000858307 0.20069862809032</size>
+            </box>
+          </geometry>
+        </collision>
+      </link>
+      <link name="link_l">
+        <pose>0.040000000186507 2.7091515686387e-10 0.33000000000068 1.5707963267949 1.571534587486e-09 6.7728773939689e-09</pose>
+        <inertial>
+          <pose>-0.010500058531761 0.21699821203947 0 0 0 0</pose>
+          <mass>8.0</mass>
+          <inertia>
+            <ixx>0.2458266484543321</ixx>
+            <iyy>0.050067359077304786</iyy>
+            <izz>0.22536067163927745</izz>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyz>0</iyz>
+          </inertia>
+        </inertial>
+        <visual name="cad_visual">
+          <geometry>
+            <mesh>
+              <uri>/home/chip/gp7_ws/src/gp7_description/meshes/link_l.stl</uri>
+            </mesh>
+          </geometry>
+          <material>
+            <ambient>0.12 0.28 0.7 1</ambient>
+            <diffuse>0.12 0.28 0.7 1</diffuse>
+          </material>
+        </visual>
+        <collision name="approximate_box">
+          <pose>-0.010500058531761 0.21699821203947 0 0 0 0</pose>
+          <geometry>
+            <box>
+              <size>0.1490001231432 0.56199641525745 0.23000000417233</size>
+            </box>
+          </geometry>
+        </collision>
+      </link>
+      <link name="link_u">
+        <pose>0.04000000088584 2.70915148737e-10 0.77500000000068 1.5707963374093 -1.5707963252234 -3.8415460146965e-09</pose>
+        <inertial>
+          <pose>0.023682530969381 0.013000000268221 0.0015000030398369 0 0 0</pose>
+          <mass>3.0</mass>
+          <inertia>
+            <ixx>0.013866250709593311</ixx>
+            <iyy>0.011535958506627766</iyy>
+            <izz>0.014597709233744843</izz>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyz>0</iyz>
+          </inertia>
+        </inertial>
+        <visual name="cad_visual">
+          <geometry>
+            <mesh>
+              <uri>/home/chip/gp7_ws/src/gp7_description/meshes/link_u.stl</uri>
+            </mesh>
+          </geometry>
+          <material>
+            <ambient>0.12 0.28 0.7 1</ambient>
+            <diffuse>0.12 0.28 0.7 1</diffuse>
+          </material>
+        </visual>
+        <collision name="approximate_box">
+          <pose>0.023682530969381 0.013000000268221 0.0015000030398369 0 0 0</pose>
+          <geometry>
+            <box>
+              <size>0.15663599222898 0.18400000780821 0.14699999988079</size>
+            </box>
+          </geometry>
+        </collision>
+      </link>
+      <link name="link_r">
+        <pose>0.040000000950052 2.7076261221917e-10 0.81500000000068 3.1415925338166 -1.5707963251896 1.2654602609459e-07</pose>
+        <inertial>
+          <pose>0 4.9732625484467e-07 0.27375000715256 0 0 0</pose>
+          <mass>6.0</mass>
+          <inertia>
+            <ixx>0.08786015465637981</ixx>
+            <iyy>0.08692246473642488</iyy>
+            <izz>0.01116236322062445</izz>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyz>0</iyz>
+          </inertia>
+        </inertial>
+        <visual name="cad_visual">
+          <geometry>
+            <mesh>
+              <uri>/home/chip/gp7_ws/src/gp7_description/meshes/link_r.stl</uri>
+            </mesh>
+          </geometry>
+          <material>
+            <ambient>0.12 0.28 0.7 1</ambient>
+            <diffuse>0.12 0.28 0.7 1</diffuse>
+          </material>
+        </visual>
+        <collision name="approximate_box">
+          <pose>0 4.9732625484467e-07 0.27375000715256 0 0 0</pose>
+          <geometry>
+            <box>
+              <size>0.10111712664366 0.11000024154782 0.40450000762939</size>
+            </box>
+          </geometry>
+        </collision>
+      </link>
+      <link name="link_b">
+        <pose>0.48000000095149 3.2508288433304e-09 0.81499999929435 3.1400669016423 -1.5707952974876 -1.5692705680746</pose>
+        <inertial>
+          <pose>-0.0010273028165102 -0.018999999389052 0 0 0 0</pose>
+          <mass>3.0</mass>
+          <inertia>
+            <ixx>0.0043379997792542015</ixx>
+            <iyy>0.002537201222214961</iyy>
+            <izz>0.004697201025072602</izz>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyz>0</iyz>
+          </inertia>
+        </inertial>
+        <visual name="cad_visual">
+          <geometry>
+            <mesh>
+              <uri>/home/chip/gp7_ws/src/gp7_description/meshes/link_b.stl</uri>
+            </mesh>
+          </geometry>
+          <material>
+            <ambient>0.12 0.28 0.7 1</ambient>
+            <diffuse>0.12 0.28 0.7 1</diffuse>
+          </material>
+        </visual>
+        <collision name="approximate_box">
+          <pose>-0.0010273028165102 -0.018999999389052 0 0 0 0</pose>
+          <geometry>
+            <box>
+              <size>0.076110478490591 0.11399999633431 0.065999999642372</size>
+            </box>
+          </geometry>
+        </collision>
+      </link>
+      <link name="link_t">
+        <pose>0.48000000095149 3.2574307540184e-09 0.81499999929771 -1.9608677418135 -1.5707963225177 -1.1807249050358</pose>
+        <inertial>
+          <pose>-6.5872445702553e-06 -6.5872445702553e-06 0.073750000447035 0 0 0</pose>
+          <mass>2.0</mass>
+          <inertia>
+            <ixx>0.0006257781603690686</ixx>
+            <iyy>0.0006257781603690686</iyy>
+            <izz>0.0011994730246577</izz>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyz>0</iyz>
+          </inertia>
+        </inertial>
+        <visual name="cad_visual">
+          <geometry>
+            <mesh>
+              <uri>/home/chip/gp7_ws/src/gp7_description/meshes/link_t.stl</uri>
+            </mesh>
+          </geometry>
+          <material>
+            <ambient>0.12 0.28 0.7 1</ambient>
+            <diffuse>0.12 0.28 0.7 1</diffuse>
+          </material>
+        </visual>
+        <collision name="approximate_box">
+          <pose>-6.5872445702553e-06 -6.5872445702553e-06 0.073750000447035 0 0 0</pose>
+          <geometry>
+            <box>
+              <size>0.059986824169755 0.059986824169755 0.012499995529652</size>
+            </box>
+          </geometry>
+        </collision>
+      </link>
+      <link name="gripper_palm">
+        <pose>0.56000000095149 3.7966760963995e-09 0.81499999916759 -1.9608677418135 -1.5707963225177 -1.1807249050358</pose>
+        <inertial>
+          <pose>0 0 0.015 0 0 0</pose>
+          <mass>0.4</mass>
+          <inertia>
+            <ixx>0.0003633333333333334</ixx>
+            <iyy>8.333333333333333e-05</iyy>
+            <izz>0.0003866666666666667</izz>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyz>0</iyz>
+          </inertia>
+        </inertial>
+        <visual name="primitive_visual">
+          <pose>0 0 0.015 0 0 0</pose>
+          <geometry>
+            <box>
+              <size>0.04 0.1 0.03</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>0.55 0.58 0.65 1</ambient>
+            <diffuse>0.55 0.58 0.65 1</diffuse>
+          </material>
+        </visual>
+        <collision name="primitive_collision">
+          <pose>0 0 0.015 0 0 0</pose>
+          <geometry>
+            <box>
+              <size>0.04 0.1 0.03</size>
+            </box>
+          </geometry>
+        </collision>
+      </link>
+      <link name="gripper_finger_positive">
+        <pose>0.59000000121438 -0.038999996001107 0.81499999896452 -1.9608677418135 -1.5707963225177 -1.1807249050358</pose>
+        <inertial>
+          <pose>0 0 0.03 0 0 0</pose>
+          <mass>0.05</mass>
+          <inertia>
+            <ixx>1.5266666666666667e-05</ixx>
+            <iyy>1.6666666666666667e-05</iyy>
+            <izz>1.9333333333333336e-06</izz>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyz>0</iyz>
+          </inertia>
+        </inertial>
+        <visual name="primitive_visual">
+          <pose>0 0 0.03 0 0 0</pose>
+          <geometry>
+            <box>
+              <size>0.02 0.008 0.06</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>0.55 0.58 0.65 1</ambient>
+            <diffuse>0.55 0.58 0.65 1</diffuse>
+          </material>
+        </visual>
+        <collision name="primitive_collision">
+          <pose>0 0 0.03 0 0 0</pose>
+          <geometry>
+            <box>
+              <size>0.02 0.008 0.06</size>
+            </box>
+          </geometry>
+        </collision>
+      </link>
+      <link name="gripper_finger_negative">
+        <pose>0.59000000068861 0.039000003998893 0.81499999927308 -1.9608677418135 -1.5707963225177 -1.1807249050358</pose>
+        <inertial>
+          <pose>0 0 0.03 0 0 0</pose>
+          <mass>0.05</mass>
+          <inertia>
+            <ixx>1.5266666666666667e-05</ixx>
+            <iyy>1.6666666666666667e-05</iyy>
+            <izz>1.9333333333333336e-06</izz>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyz>0</iyz>
+          </inertia>
+        </inertial>
+        <visual name="primitive_visual">
+          <pose>0 0 0.03 0 0 0</pose>
+          <geometry>
+            <box>
+              <size>0.02 0.008 0.06</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>0.55 0.58 0.65 1</ambient>
+            <diffuse>0.55 0.58 0.65 1</diffuse>
+          </material>
+        </visual>
+        <collision name="primitive_collision">
+          <pose>0 0 0.03 0 0 0</pose>
+          <geometry>
+            <box>
+              <size>0.02 0.008 0.06</size>
+            </box>
+          </geometry>
+        </collision>
+      </link>
+      <frame name="gripper_tcp" attached_to="gripper_palm">
+        <pose relative_to="gripper_palm">0 0 0.075 0 0 0</pose>
+      </frame>
+      <joint name="base_fixed_to_world" type="fixed">
+        <parent>world</parent>
+        <child>base_link</child>
+      </joint>
+      <joint name="joint_s" type="revolute">
+        <parent>base_link</parent>
+        <child>link_s</child>
+        <pose relative_to="link_s">0 0 0 0 0 0</pose>
+        <axis>
+          <xyz>0 0 1</xyz>
+          <limit>
+            <lower>-0.6</lower>
+            <upper>0.6</upper>
+            <effort>1000</effort>
+            <velocity>0.4</velocity>
+          </limit>
+          <dynamics>
+            <damping>0.1</damping>
+          </dynamics>
+        </axis>
+      </joint>
+      <plugin filename="/home/chip/gp7_ws/install/gp7_description/lib/libgp7_measured_velocity_pid.so" name="gp7::MeasuredVelocityPID">
+        <joint_name>joint_s</joint_name>
+        <topic>/gp7/joint_s/cmd_pos</topic>
+        <use_velocity_commands>false</use_velocity_commands>
+        <p_gain>3000</p_gain>
+        <i_gain>1000</i_gain>
+        <d_gain>100</d_gain>
+        <i_max>100</i_max>
+        <i_min>-100</i_min>
+        <cmd_max>500</cmd_max>
+        <cmd_min>-500</cmd_min>
+        <initial_position>0.0</initial_position>
+      </plugin>
+      <joint name="joint_l" type="revolute">
+        <parent>link_s</parent>
+        <child>link_l</child>
+        <pose relative_to="link_l">0 0 0 0 0 0</pose>
+        <axis>
+          <xyz>0 0 1</xyz>
+          <limit>
+            <lower>-0.6</lower>
+            <upper>0.6</upper>
+            <effort>1000</effort>
+            <velocity>0.4</velocity>
+          </limit>
+          <dynamics>
+            <damping>0.1</damping>
+          </dynamics>
+        </axis>
+      </joint>
+      <plugin filename="/home/chip/gp7_ws/install/gp7_description/lib/libgp7_measured_velocity_pid.so" name="gp7::MeasuredVelocityPID">
+        <joint_name>joint_l</joint_name>
+        <topic>/gp7/joint_l/cmd_pos</topic>
+        <use_velocity_commands>false</use_velocity_commands>
+        <p_gain>4000</p_gain>
+        <i_gain>2000</i_gain>
+        <d_gain>100</d_gain>
+        <i_max>100</i_max>
+        <i_min>-100</i_min>
+        <cmd_max>500</cmd_max>
+        <cmd_min>-500</cmd_min>
+        <initial_position>0.0</initial_position>
+      </plugin>
+      <joint name="joint_u" type="revolute">
+        <parent>link_l</parent>
+        <child>link_u</child>
+        <pose relative_to="link_u">0 0 0 0 0 0</pose>
+        <axis>
+          <xyz>0 0 1</xyz>
+          <limit>
+            <lower>-0.6</lower>
+            <upper>0.6</upper>
+            <effort>1000</effort>
+            <velocity>0.4</velocity>
+          </limit>
+          <dynamics>
+            <damping>0.1</damping>
+          </dynamics>
+        </axis>
+      </joint>
+      <plugin filename="/home/chip/gp7_ws/install/gp7_description/lib/libgp7_measured_velocity_pid.so" name="gp7::MeasuredVelocityPID">
+        <joint_name>joint_u</joint_name>
+        <topic>/gp7/joint_u/cmd_pos</topic>
+        <use_velocity_commands>false</use_velocity_commands>
+        <p_gain>3000</p_gain>
+        <i_gain>2000</i_gain>
+        <d_gain>100</d_gain>
+        <i_max>100</i_max>
+        <i_min>-100</i_min>
+        <cmd_max>500</cmd_max>
+        <cmd_min>-500</cmd_min>
+        <initial_position>0.0</initial_position>
+      </plugin>
+      <joint name="joint_r" type="revolute">
+        <parent>link_u</parent>
+        <child>link_r</child>
+        <pose relative_to="link_r">0 0 0 0 0 0</pose>
+        <axis>
+          <xyz>0 0 1</xyz>
+          <limit>
+            <lower>-0.6</lower>
+            <upper>0.6</upper>
+            <effort>1000</effort>
+            <velocity>0.4</velocity>
+          </limit>
+          <dynamics>
+            <damping>0.1</damping>
+          </dynamics>
+        </axis>
+      </joint>
+      <plugin filename="/home/chip/gp7_ws/install/gp7_description/lib/libgp7_measured_velocity_pid.so" name="gp7::MeasuredVelocityPID">
+        <joint_name>joint_r</joint_name>
+        <topic>/gp7/joint_r/cmd_pos</topic>
+        <use_velocity_commands>false</use_velocity_commands>
+        <p_gain>500</p_gain>
+        <i_gain>200</i_gain>
+        <d_gain>10</d_gain>
+        <i_max>100</i_max>
+        <i_min>-100</i_min>
+        <cmd_max>500</cmd_max>
+        <cmd_min>-500</cmd_min>
+        <initial_position>0.0</initial_position>
+      </plugin>
+      <joint name="joint_b" type="revolute">
+        <parent>link_r</parent>
+        <child>link_b</child>
+        <pose relative_to="link_b">0 0 0 0 0 0</pose>
+        <axis>
+          <xyz>0 0 1</xyz>
+          <limit>
+            <lower>-0.6</lower>
+            <upper>0.6</upper>
+            <effort>1000</effort>
+            <velocity>0.4</velocity>
+          </limit>
+          <dynamics>
+            <damping>0.1</damping>
+          </dynamics>
+        </axis>
+      </joint>
+      <plugin filename="/home/chip/gp7_ws/install/gp7_description/lib/libgp7_measured_velocity_pid.so" name="gp7::MeasuredVelocityPID">
+        <joint_name>joint_b</joint_name>
+        <topic>/gp7/joint_b/cmd_pos</topic>
+        <use_velocity_commands>false</use_velocity_commands>
+        <p_gain>300</p_gain>
+        <i_gain>100</i_gain>
+        <d_gain>5</d_gain>
+        <i_max>100</i_max>
+        <i_min>-100</i_min>
+        <cmd_max>500</cmd_max>
+        <cmd_min>-500</cmd_min>
+        <initial_position>0.0</initial_position>
+      </plugin>
+      <joint name="joint_t" type="revolute">
+        <parent>link_b</parent>
+        <child>link_t</child>
+        <pose relative_to="link_t">0 0 0 0 0 0</pose>
+        <axis>
+          <xyz>0 0 1</xyz>
+          <limit>
+            <lower>-0.6</lower>
+            <upper>0.6</upper>
+            <effort>1000</effort>
+            <velocity>0.4</velocity>
+          </limit>
+          <dynamics>
+            <damping>0.1</damping>
+          </dynamics>
+        </axis>
+      </joint>
+      <plugin filename="/home/chip/gp7_ws/install/gp7_description/lib/libgp7_measured_velocity_pid.so" name="gp7::MeasuredVelocityPID">
+        <joint_name>joint_t</joint_name>
+        <topic>/gp7/joint_t/cmd_pos</topic>
+        <use_velocity_commands>false</use_velocity_commands>
+        <p_gain>100</p_gain>
+        <i_gain>50</i_gain>
+        <d_gain>1</d_gain>
+        <i_max>100</i_max>
+        <i_min>-100</i_min>
+        <cmd_max>500</cmd_max>
+        <cmd_min>-500</cmd_min>
+        <initial_position>0.0</initial_position>
+      </plugin>
+      <joint name="gripper_joint_positive" type="prismatic">
+        <parent>gripper_palm</parent>
+        <child>gripper_finger_positive</child>
+        <pose relative_to="gripper_finger_positive">0 0 0 0 0 0</pose>
+        <axis>
+          <xyz>0 -1 0</xyz>
+          <limit>
+            <lower>0</lower>
+            <upper>0.012</upper>
+            <effort>20</effort>
+            <velocity>0.02</velocity>
+          </limit>
+          <dynamics>
+            <damping>20.0</damping>
+          </dynamics>
+        </axis>
+      </joint>
+      <plugin filename="gz-sim-joint-position-controller-system" name="gz::sim::systems::JointPositionController">
+        <joint_name>gripper_joint_positive</joint_name>
+        <topic>/gp7/gripper_joint_positive/cmd_pos</topic>
+        <use_velocity_commands>false</use_velocity_commands>
+        <p_gain>100</p_gain>
+        <i_gain>50</i_gain>
+        <d_gain>2</d_gain>
+        <i_max>1</i_max>
+        <i_min>-1</i_min>
+        <cmd_max>2.0</cmd_max>
+        <cmd_min>-2.0</cmd_min>
+        <initial_position>0.0</initial_position>
+      </plugin>
+      <joint name="gripper_joint_negative" type="prismatic">
+        <parent>gripper_palm</parent>
+        <child>gripper_finger_negative</child>
+        <pose relative_to="gripper_finger_negative">0 0 0 0 0 0</pose>
+        <axis>
+          <xyz>0 1 0</xyz>
+          <limit>
+            <lower>0</lower>
+            <upper>0.012</upper>
+            <effort>20</effort>
+            <velocity>0.02</velocity>
+          </limit>
+          <dynamics>
+            <damping>20.0</damping>
+          </dynamics>
+        </axis>
+      </joint>
+      <plugin filename="gz-sim-joint-position-controller-system" name="gz::sim::systems::JointPositionController">
+        <joint_name>gripper_joint_negative</joint_name>
+        <topic>/gp7/gripper_joint_negative/cmd_pos</topic>
+        <use_velocity_commands>false</use_velocity_commands>
+        <p_gain>100</p_gain>
+        <i_gain>50</i_gain>
+        <d_gain>2</d_gain>
+        <i_max>1</i_max>
+        <i_min>-1</i_min>
+        <cmd_max>2.0</cmd_max>
+        <cmd_min>-2.0</cmd_min>
+        <initial_position>0.0</initial_position>
+      </plugin>
+      <joint name="gripper_mount" type="fixed">
+        <parent>link_t</parent>
+        <child>gripper_palm</child>
+        <pose relative_to="gripper_palm">0 0 0 0 0 0</pose>
+      </joint>
+      <plugin filename="gz-sim-joint-state-publisher-system" name="gz::sim::systems::JointStatePublisher">
+        <topic>/gp7/joint_states</topic>
+        <joint_name>joint_s</joint_name>
+        <joint_name>joint_l</joint_name>
+        <joint_name>joint_u</joint_name>
+        <joint_name>joint_r</joint_name>
+        <joint_name>joint_b</joint_name>
+        <joint_name>joint_t</joint_name>
+        <joint_name>gripper_joint_positive</joint_name>
+        <joint_name>gripper_joint_negative</joint_name>
+      </plugin>
+      <plugin filename="gz-sim-pose-publisher-system" name="gz::sim::systems::PosePublisher">
+        <publish_link_pose>true</publish_link_pose>
+        <publish_model_pose>true</publish_model_pose>
+        <use_pose_vector_msg>true</use_pose_vector_msg>
+        <update_frequency>50</update_frequency>
+        <static_publisher>true</static_publisher>
+        <static_update_frequency>1</static_update_frequency>
+      </plugin>
+    </model>
+  </world>
+</sdf>

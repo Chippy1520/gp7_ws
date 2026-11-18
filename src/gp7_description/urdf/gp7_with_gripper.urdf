@@ -1,0 +1,256 @@
+<?xml version='1.0' encoding='utf-8'?>
+<robot name="gp7_with_parallel_gripper">
+  <!--CAD Home pose is q=0 in this export. Manufacturer zero/sign mapping and arm inertias/controllers are NOT verified. STL coordinates are METRES; do not apply 0.001 scale.-->
+  <link name="base_link">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://gp7_description/meshes/base_link.stl" scale="1 1 1" />
+      </geometry>
+      <material name="yaskawa_blue">
+        <color rgba="0.05 0.10 0.40 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://gp7_description/meshes/base_link.stl" scale="1 1 1" />
+      </geometry>
+    </collision>
+  </link>
+  <link name="link_s">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://gp7_description/meshes/link_s.stl" scale="1 1 1" />
+      </geometry>
+      <material name="yaskawa_blue">
+        <color rgba="0.05 0.10 0.40 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://gp7_description/meshes/link_s.stl" scale="1 1 1" />
+      </geometry>
+    </collision>
+  </link>
+  <link name="link_l">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://gp7_description/meshes/link_l.stl" scale="1 1 1" />
+      </geometry>
+      <material name="yaskawa_blue">
+        <color rgba="0.05 0.10 0.40 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://gp7_description/meshes/link_l.stl" scale="1 1 1" />
+      </geometry>
+    </collision>
+  </link>
+  <link name="link_u">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://gp7_description/meshes/link_u.stl" scale="1 1 1" />
+      </geometry>
+      <material name="yaskawa_blue">
+        <color rgba="0.05 0.10 0.40 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://gp7_description/meshes/link_u.stl" scale="1 1 1" />
+      </geometry>
+    </collision>
+  </link>
+  <link name="link_r">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://gp7_description/meshes/link_r.stl" scale="1 1 1" />
+      </geometry>
+      <material name="yaskawa_blue">
+        <color rgba="0.05 0.10 0.40 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://gp7_description/meshes/link_r.stl" scale="1 1 1" />
+      </geometry>
+    </collision>
+  </link>
+  <link name="link_b">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://gp7_description/meshes/link_b.stl" scale="1 1 1" />
+      </geometry>
+      <material name="yaskawa_blue">
+        <color rgba="0.05 0.10 0.40 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://gp7_description/meshes/link_b.stl" scale="1 1 1" />
+      </geometry>
+    </collision>
+  </link>
+  <link name="link_t">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://gp7_description/meshes/link_t.stl" scale="1 1 1" />
+      </geometry>
+      <material name="yaskawa_blue">
+        <color rgba="0.05 0.10 0.40 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://gp7_description/meshes/link_t.stl" scale="1 1 1" />
+      </geometry>
+    </collision>
+  </link>
+  <joint name="joint_s" type="revolute">
+    <parent link="base_link" />
+    <child link="link_s" />
+    <origin xyz="2.8796409701215e-14 7.477778794572125e-15 0.1990000000009829" rpy="-3.565297174746065e-12 -5.01588403447336e-12 6.772877370053628e-09" />
+    <axis xyz="0 0 1" />
+    <limit lower="-2.9670597283903604" upper="2.9670597283903604" velocity="6.54" effort="100" />
+  </joint>
+  <joint name="joint_l" type="revolute">
+    <parent link="link_s" />
+    <child link="link_l" />
+    <origin xyz="0.0400000001871355 -4.744709099523959e-13 0.1309999999994937" rpy="1.570796326798462 1.576550471520488e-09 2.392092974394971e-17" />
+    <axis xyz="0 0 1" />
+    <limit lower="-1.1344640137963142" upper="2.530727415391778" velocity="5.5" effort="100" />
+  </joint>
+  <joint name="joint_u" type="revolute">
+    <parent link="link_l" />
+    <child link="link_u" />
+    <origin xyz="-1.580974653922384e-16 0.4449999999999997 7.606046331844441e-18" rpy="2.391543871048833e-17 -4.866734244067944e-18 1.570796326794897" />
+    <axis xyz="0 0 1" />
+    <limit lower="-1.2217304763960306" upper="3.3161255787892263" velocity="7.15" effort="100" />
+  </joint>
+  <joint name="joint_r" type="revolute">
+    <parent link="link_u" />
+    <child link="link_r" />
+    <origin xyz="0.04000000000000013 -1.350451391447337e-12 1.525362854968206e-13" rpy="1.570796326794897 2.0895217123123e-16 -3.376083744650431e-11" />
+    <axis xyz="0 0 1" />
+    <limit lower="-3.3161255787892263" upper="3.3161255787892263" velocity="9.59" effort="100" />
+  </joint>
+  <joint name="joint_b" type="revolute">
+    <parent link="link_r" />
+    <child link="link_b" />
+    <origin xyz="3.345943331422888e-16 1.22464641492429e-18 0.4400000000014415" rpy="-1.570796326794897 3.482797174341522e-11 1.029306142851466e-06" />
+    <axis xyz="0 0 1" />
+    <limit lower="-2.356194490192345" upper="2.356194490192345" velocity="9.59" effort="100" />
+  </joint>
+  <joint name="joint_t" type="revolute">
+    <parent link="link_b" />
+    <child link="link_t" />
+    <origin xyz="3.360840796562383e-12 -6.031563000306387e-17 -6.601914147314833e-12" rpy="1.570796326762586 1.025350226870873e-06 -5.596181465990611e-11" />
+    <axis xyz="0 0 1" />
+    <limit lower="-6.283185307179586" upper="6.283185307179586" velocity="17.45" effort="100" />
+  </joint>
+  <link name="gripper_palm">
+    <inertial>
+      <origin xyz="0 0 0.015" rpy="0 0 0" />
+      <mass value="0.4" />
+      <inertia ixx="0.0003633333333333334" iyy="8.333333333333333e-05" izz="0.0003866666666666667" ixy="0" ixz="0" iyz="0" />
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0.015" rpy="0 0 0" />
+      <geometry>
+        <box size="0.04 0.1 0.03" />
+      </geometry>
+      <material name="simulation_grey">
+        <color rgba="0.55 0.58 0.65 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0.015" rpy="0 0 0" />
+      <geometry>
+        <box size="0.04 0.1 0.03" />
+      </geometry>
+    </collision>
+  </link>
+  <link name="gripper_finger_positive">
+    <inertial>
+      <origin xyz="0 0 0.03" rpy="0 0 0" />
+      <mass value="0.05" />
+      <inertia ixx="1.5266666666666667e-05" iyy="1.6666666666666667e-05" izz="1.9333333333333336e-06" ixy="0" ixz="0" iyz="0" />
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0.03" rpy="0 0 0" />
+      <geometry>
+        <box size="0.02 0.008 0.06" />
+      </geometry>
+      <material name="simulation_grey">
+        <color rgba="0.55 0.58 0.65 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0.03" rpy="0 0 0" />
+      <geometry>
+        <box size="0.02 0.008 0.06" />
+      </geometry>
+    </collision>
+  </link>
+  <joint name="gripper_joint_positive" type="prismatic">
+    <parent link="gripper_palm" />
+    <child link="gripper_finger_positive" />
+    <origin xyz="0 0.039 0.03" rpy="0 0 0" />
+    <axis xyz="0 -1 0" />
+    <limit lower="0" upper="0.012" effort="20" velocity="0.05" />
+  </joint>
+  <link name="gripper_finger_negative">
+    <inertial>
+      <origin xyz="0 0 0.03" rpy="0 0 0" />
+      <mass value="0.05" />
+      <inertia ixx="1.5266666666666667e-05" iyy="1.6666666666666667e-05" izz="1.9333333333333336e-06" ixy="0" ixz="0" iyz="0" />
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0.03" rpy="0 0 0" />
+      <geometry>
+        <box size="0.02 0.008 0.06" />
+      </geometry>
+      <material name="simulation_grey">
+        <color rgba="0.55 0.58 0.65 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0.03" rpy="0 0 0" />
+      <geometry>
+        <box size="0.02 0.008 0.06" />
+      </geometry>
+    </collision>
+  </link>
+  <joint name="gripper_joint_negative" type="prismatic">
+    <parent link="gripper_palm" />
+    <child link="gripper_finger_negative" />
+    <origin xyz="0 -0.039 0.03" rpy="0 0 0" />
+    <axis xyz="0 1 0" />
+    <limit lower="0" upper="0.012" effort="20" velocity="0.05" />
+  </joint>
+  <link name="gripper_tcp" />
+  <joint name="gripper_tcp_fixed" type="fixed">
+    <parent link="gripper_palm" />
+    <child link="gripper_tcp" />
+    <origin xyz="0 0 0.075" rpy="0 0 0" />
+  </joint>
+  <joint name="gripper_mount" type="fixed">
+    <parent link="link_t" />
+    <child link="gripper_palm" />
+    <origin xyz="0 0 0.080" rpy="0 0 0" />
+  </joint>
+</robot>

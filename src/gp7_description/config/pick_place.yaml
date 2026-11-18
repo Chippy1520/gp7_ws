@@ -1,0 +1,54 @@
+# Simulation-only engineering envelope inside the existing provisional URDF limits.
+# Not manufacturer-calibrated actuator limits or torque validation.
+frame: base_link
+ros_domain_id: 77
+gz_partition: gp7_project_lab
+world: gp7_lab
+joint_limits:
+  joint_s: [-1.25, 1.25]
+  joint_l: [-1.05, 0.75]
+  joint_u: [-1.05, 1.30]
+  joint_r: [-1.80, 1.80]
+  joint_b: [-1.80, 1.80]
+  joint_t: [-2.50, 2.50]
+velocity_limit_rad_s: 0.20
+acceleration_limit_rad_s2: 0.25
+initial_position_rad: [0, 0, 0, 0, 0, 0]
+pedestal:
+  base_xyz_m: [0.5, 0.5, 0.0]
+  size_m: [0.3, 0.3, 0.2]
+cube:
+  initial_center_xyz_m: [0.45, -0.20, 0.025]
+  size_m: 0.05
+placement:
+  center_xyz_m: [0.5, 0.5, 0.225]
+  hover_center_xyz_m: [0.5, 0.5, 0.325]
+grasp:
+  mode: physical
+  preload_force_n: 2.0  # Nominal per-jaw command at 2 mm blocked error, not a measured wrench.
+  calibrated: false
+  # Never silently enable ideal attachment.
+  ideal_attachment_approved: false
+planning:
+  arm_profile: quintic_given_duration
+  transfer_wrist: continuous_orientation_compensation
+  contact_motion: vertical_fixed_orientation_ik
+  sample_period_s: 0.02
+  orientation_reference_tolerance_rad: 0.00001
+  wrist_min_singular_value: 0.05
+  collision_clearance_m: 0.005
+  # Internal wrist/palm CAD gaps are about 2.5–4 mm; separate from obstacles.
+  self_collision_clearance_m: 0.001
+  collision_sample_period_s: 0.005
+execution:
+  arm_actuation: gazebo_position  # Standard PID-bypass position inputs; not torque validation.
+  jaw_actuation: effort_pid  # Explicit detachable mode switches jaws to idealized position inputs.
+  velocity_feedforward: false
+  use_sim_time: true
+  command_period_s: 0.02
+  max_feedback_age_wall_s: 0.5
+  tracking_abort_rad: 0.05
+  settle_position_rad: 0.003
+  settle_velocity_rad_s: 0.008
+  settle_duration_s: 0.30
+  max_clock_pause_wall_s: 30.0

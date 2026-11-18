@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+# ROS setup reads optional unset variables; do not enable nounset when sourcing it.
+set -eo pipefail
+ROOT="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
+if [[ ! -x "$ROOT/.venv-pick-place/bin/python" || ! -f /opt/ros/jazzy/setup.bash ]]; then
+    printf '%s\n' 'Dependencies are missing. Run ./setup.sh first.' >&2
+    exit 1
+fi
+source /opt/ros/jazzy/setup.bash
+if [[ -f "$ROOT/install/setup.bash" ]]; then
+    source "$ROOT/install/setup.bash"
+fi
+export ROS_DOMAIN_ID=77 GZ_PARTITION=gp7_project_lab GZ_IP=127.0.0.1
+export PYTHONPATH="$ROOT${PYTHONPATH:+:$PYTHONPATH}"
+if [[ "${1:-}" != --idle-screenshot ]]; then
+    if [[ -z "${DISPLAY:-}" ]]; then
+        printf '%s\n' 'The GUI needs an X11/XWayland desktop. For headless use: ./task.py --no-viewer' >&2
+        exit 1
+    fi
+    export QT_QPA_PLATFORM=xcb
+fi
+cd -- "$ROOT"
+exec "$ROOT/.venv-pick-place/bin/python" -m gp7_demo.gui "$@"

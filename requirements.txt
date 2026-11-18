@@ -1,0 +1,8 @@
+# Use Ubuntu 24.04 /usr/bin/python3 (3.12), with --system-site-packages.
+# PyQt5, rclpy, ROS messages, protobuf and gz Python bindings come from apt/ROS.
+# Matplotlib 3.6.3 may require a source build on Python 3.12; see setup.sh.
+numpy==1.26.4
+scipy==1.11.4
+matplotlib==3.6.3
+python-fcl==0.7.0.11
+PyYAML==6.0.1

@@ -1,0 +1,12 @@
+# Keep supplied geometry and numerical input files byte-for-byte.
+src/gp7_description/meshes/** -text
+src/gp7_description/urdf/** -text whitespace=cr-at-eol
+src/gp7_description/config/** -text whitespace=cr-at-eol
+src/gp7_description/worlds/** -text whitespace=cr-at-eol
+src/gp7_description/src/** -text whitespace=cr-at-eol
+# SolidWorks' original frame export uses CRLF; preserve it rather than rewriting data.
+src/gp7_description/config/cad_frame_transforms.json whitespace=cr-at-eol
+# Launchers must work directly on the supported Ubuntu target.
+*.sh text eol=lf
+*.py text eol=lf
+gui text eol=lf
